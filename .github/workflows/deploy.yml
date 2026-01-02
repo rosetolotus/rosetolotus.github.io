@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -10,30 +11,36 @@ permissions:
   id-token: write
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
-      - name: Build
+      - name: Build Astro
         run: npm run build
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v3
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3 # Updated from v1
         with:
           path: ./dist
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        id: deployment
+        uses: actions/deploy-pages@v4 # Updated from v1
