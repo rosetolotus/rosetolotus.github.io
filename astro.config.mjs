@@ -1,13 +1,14 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import tailwindcss from '@tailwindcss/vite';
+import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   site: 'https://rosetolotus.github.io',
   base: '/',
-  integrations: [react()], // Removed tailwind() from here
-  vite: {
-    plugins: [tailwindcss()], // Added tailwindcss to Vite plugins
-  },
+  integrations: [
+    react(),
+    // Use Astro's Tailwind integration
+    tailwind(),
+  ],
   output: 'static',
 });
