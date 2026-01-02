@@ -1,12 +1,10 @@
 ---
 title: "Glass Jars"
-date: 285 weeks ago
-iamge : "images/glassjars.jpeg"
+date: 2026-01-02
+iamge : "public/images/glassjars.jpeg"
 description: "Memories"
 
 ---
-
-# Glass Jars
 
 Feeling i carried for you,
 i bottled them in a glass jars
