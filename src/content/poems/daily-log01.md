@@ -1,7 +1,7 @@
 ---
 title: "Glass Jars"
 date: 2026-01-02
-image: "public/images/glassjars.jpeg"
+image: "/public/images/glassjars.jpeg"
 description: "Memories"
 
 ---
