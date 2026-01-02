@@ -1,7 +1,7 @@
 ---
 title: "Glass Jars"
 date: 2026-01-02
-iamge : "public/images/glassjars"
+image : "public/images/glassjars"
 description: "Memories"
 
 ---
