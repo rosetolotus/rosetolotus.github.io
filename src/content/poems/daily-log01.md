@@ -1,7 +1,9 @@
 ---
 title: "Glass Jars"
-date: 285 weeks ago
-description: "A log of the day the code finally worked."
+date: 2026-01-02
+iamge : "images/glassjars.jpeg"
+description: "Memories"
+
 ---
 
 # Glass Jars
