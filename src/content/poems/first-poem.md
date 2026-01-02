@@ -1,6 +1,6 @@
 ---
 title: "Entropy"
-date: 2026-01-02
+date: 2nd Jan
 excerpt: "The universe is slowly unwinding..."
 theme: "dark"
 image: "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
