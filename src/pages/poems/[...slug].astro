@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LikeButton from '../../components/LikeButton.jsx';
+import SocialShare from '../../components/SocialShare.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('poems');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Robust formatter for the single page: day-first verbose (e.g. "Friday, 2 January").
+// Omits year for posts in the current year and shows "TBD" when missing.
+const formatFullDate = (date: string | Date | undefined): string => {
+  if (!date) return 'TBD';
+  const d = new Date(date);
+  const isThisYear = d.getFullYear() === new Date().getFullYear();
+  const options: Intl.DateTimeFormatOptions = isThisYear
+    ? { weekday: 'long', day: 'numeric', month: 'long' }
+    : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  return d.toLocaleDateString('en-GB', options);
+};
+
+const dateStr = formatFullDate(entry.data?.date);
+---
+
+<BaseLayout title={entry.data.title} theme={entry.data.theme}>
+  
+  <nav class="mb-12">
+    <a href="/" class="font-sans text-xs text-ink-light hover:text-ink transition-colors">← Index</a>
+  </nav>
+
+  <article class="max-w-xl mx-auto animate-fade-in">
+    <header class="mb-10 text-center">
+      <h1 class="font-serif text-5xl md:text-6xl text-ink mb-4 italic leading-tight">
+        {entry.data.title}
+      </h1>
+      <time class="font-sans text-xs tracking-widest text-ink-light uppercase block">
+        {dateStr}
+      </time>
+    </header>
+
+    {entry.data.image && (
+      <div class={`mb-12 overflow-hidden rounded-sm ${entry.data.image_style || ''}`}>
+        <img src={entry.data.image} alt={entry.data.title} class="w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+      </div>
+    )}
+
+    <div class="prose prose-p:font-serif prose-p:text-lg prose-p:leading-loose prose-headings:font-serif prose-a:text-accent-gold text-ink prose-blockquote:border-l-2 prose-blockquote:border-gray-200 prose-blockquote:italic">
+      <Content />
+    </div>
+
+    <div class="mt-20 pt-8 border-t border-gray-100 flex justify-between items-center">
+      <LikeButton client:load slug={entry.slug} />
+      <SocialShare title={entry.data.title} url={Astro.url} />
+    </div>
+
+  </article>
+</BaseLayout>

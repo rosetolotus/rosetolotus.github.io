@@ -1,16 +1,46 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 
+// Get all poems and sort by date (non-mutating) — posts without a date fall to the end
+const allPoems = await getCollection('poems');
+type PoemEntry = { data?: { date?: string | Date } } | any;
+const getTime = (post: PoemEntry) => (post?.data?.date ? new Date(post.data.date).valueOf() : 0);
+const sortedPoems = [...allPoems].sort((a, b) => getTime(b) - getTime(a));
+
+// Helper to format date as "2 Jan" (day-first, no leading zero). Omits year for current year. Returns "TBD" if no date.
+const formatDate = (date: string | Date | undefined): string => {
+	if (!date) return 'TBD';
+	const d = new Date(date);
+	const isThisYear = d.getFullYear() === new Date().getFullYear();
+	const options: Intl.DateTimeFormatOptions = isThisYear ? { day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short', year: 'numeric' };
+	return d.toLocaleDateString('en-GB', options);
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Archive">
+	<header class="mb-16 pt-8 animate-fade-in">
+		<h1 class="font-serif text-4xl italic font-bold tracking-tight text-ink">rosetolotus.</h1>
+		<p class="font-sans text-xs mt-2 text-ink-light tracking-widest uppercase">The Digital Garden</p>
+	</header>
+
+	<section class="space-y-12">
+		{sortedPoems.map((post) => (
+			<article class="group relative flex flex-col items-start animate-fade-in">
+				<a href={`/poems/${post.slug}`} class="block w-full">
+					<div class="flex justify-between items-baseline border-b border-gray-200 pb-2 group-hover:border-gray-400 transition-colors">
+						<h2 class="font-serif text-2xl text-ink group-hover:italic transition-all duration-300">
+							{post.data.title}
+						</h2>
+						<span class="font-sans text-xs text-gray-400 tabular-nums shrink-0 ml-4">
+							{formatDate(post.data.date)}
+						</span>
+					</div>
+					<p class="font-serif text-ink-light mt-2 line-clamp-2 opacity-70 group-hover:opacity-100 transition-opacity">
+						{post.data.excerpt || "Read more..."}
+					</p>
+				</a>
+			</article>
+		))}
+	</section>
+</BaseLayout>
